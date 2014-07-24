@@ -3,10 +3,10 @@
 
     <string name="app_name">drawApp</string>
     <string name="hello_world">Hello world!</string>
-    
     <string name="action_draw">Draw</string>
     <string name="action_save">Save</string>
     <string name="action_search">Search</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_color">Choose a color</string>
 
 </resources>

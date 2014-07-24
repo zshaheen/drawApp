@@ -11,6 +11,11 @@
           android:icon="@drawable/ic_action_draw"
           android:title="@string/action_draw"
           android:showAsAction="always"  />
+	
+	<item android:id="@+id/action_color_change"
+          android:icon="@drawable/ic_launcher"
+          android:title="@string/action_draw"
+          android:showAsAction="always"  />
 	<!--  
 	<item android:id="@+id/action_search"
           android:icon="@drawable/ic_launcher"

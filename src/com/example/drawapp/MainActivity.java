@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.Bundle;
 import android.os.Environment;
@@ -51,8 +52,9 @@ public class MainActivity extends Activity {
     		AlertDialog.Builder nameCollision = new AlertDialog.Builder(this);
     		nameCollision.setTitle("Uh oh");
     		TextView text = new TextView(this);
-    		text.setText("A file with the same name exists. Do you want to replace the existing file?");
-    		text.setGravity(Gravity.CENTER_HORIZONTAL);
+    		text.setText("A file with this name exists.\nReplace the existing file?");
+    		text.setTextSize(18);
+    		text.setGravity(Gravity.CENTER);
     		nameCollision.setView(text);
     		nameCollision.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
     	        public void onClick(DialogInterface dialog, int whichButton) {
@@ -119,11 +121,18 @@ public class MainActivity extends Activity {
 	        	dialog.cancel();
         }});
 		saveDialog.show();
-		
-    	
-    	
     	
     }
+    
+    public void onColorChange(MenuItem item)  {
+    	//launch a dialog with color
+    	//launch a separate activity 
+    	Intent intent = new Intent(this, ColorActivity.class);
+    	startActivity(intent);
+    	item.setIcon(R.drawable.ic_action_draw);
+    
+    }
+    
     
 
     @Override
@@ -147,6 +156,10 @@ public class MainActivity extends Activity {
         
         case R.id.action_save:
         	onSaveButton();
+        	break;
+        
+        case R.id.action_color_change:
+        	onColorChange(item);
         	break;
         
         }
