@@ -3,9 +3,9 @@ package com.example.drawapp;
 import android.content.Context;
 import android.view.View;
 import android.util.AttributeSet;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.view.MotionEvent;
@@ -24,7 +24,7 @@ public class DrawingView extends View {
 	//canvas
 	private Canvas drawCanvas;
 	//canvas bitmap
-	private Bitmap canvasBitmap;
+	public Bitmap canvasBitmap;
 	
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -52,6 +52,8 @@ public class DrawingView extends View {
 		super.onSizeChanged(w, h, oldw, oldh);
 		canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 		drawCanvas = new Canvas(canvasBitmap);
+		drawCanvas.drawColor(Color.WHITE);
+		//drawCanvas.drawColor(Color.TRANSPARENT);
 	}
 	
 	
