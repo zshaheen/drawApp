@@ -1,4 +1,28 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFCCCCCC"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+ 	
+	
+    <!--  Layout for canvas -->
+    <com.example.drawapp.DrawingView
+	    android:id="@+id/drawing"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_marginBottom="3dp"
+	    android:layout_marginLeft="5dp"
+	    android:layout_marginRight="5dp"
+	    android:layout_marginTop="3dp"
+	    android:layout_weight="1"
+	    android:background="#FFFFFFFF" />
+
+    
+    
+</LinearLayout>
+<!-- <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +32,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.drawapp.MainActivity$PlaceholderFragment" >
 	
-    <!--  A possible background for the canvas
+    A possible background for the canvas
     <LinearLayout 
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
@@ -17,7 +41,7 @@
 	    tools:context=".MainActivity" >
 	 
 	</LinearLayout>
-    -->
+   
     <com.example.drawapp.DrawingView
 	    android:id="@+id/drawing"
 	    android:layout_width="fill_parent"
@@ -30,7 +54,7 @@
 	    android:background="#FFFFFFFF" />
 
 </RelativeLayout>
-
+ -->
 <!-- <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
