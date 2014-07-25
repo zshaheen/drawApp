@@ -13,8 +13,8 @@
           android:showAsAction="always"  />
 	
 	<item android:id="@+id/action_color_change"
-          android:icon="@drawable/ic_launcher"
-          android:title="@string/action_draw"
+          android:icon="@drawable/black"
+          android:title="@string/action_color_change"
           android:showAsAction="always"  />
 	<!--  
 	<item android:id="@+id/action_search"

@@ -30,6 +30,8 @@ import android.os.Build;
 
 public class MainActivity extends Activity {
 	
+	private static final int COLOR_ICON = 0;
+	private Menu mMenu;
 	private DrawingView drawView;
 	String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SnapDrawShare/";
     String filename = "temp";
@@ -128,18 +130,35 @@ public class MainActivity extends Activity {
     	//launch a dialog with color
     	//launch a separate activity 
     	Intent intent = new Intent(this, ColorActivity.class);
-    	startActivity(intent);
-    	item.setIcon(R.drawable.ic_action_draw);
+    	startActivityForResult(intent, COLOR_ICON);
+    	//item.setIcon(R.drawable.ic_action_draw);
     
     }
     
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {     
+    	 // super.onActivityResult(requestCode, resultCode, data); 
+    	  if(requestCode == COLOR_ICON && resultCode == RESULT_OK) {
+    	      int colorIndex = data.getIntExtra("COLOR_INDEX", 0);
+    	      // TODO Switch tabs using the index.
+    	      //int shit = ColorActivity.colors[colorIndex];
+    	      
+    	      MenuItem colorButton = (MenuItem) mMenu.findItem(R.id.action_color_change);
+    	      //Toast.makeText(getApplicationContext(), "Index:" + colorIndex, Toast.LENGTH_LONG).show();
+    	      //ColorActivity.getColor(colorIndex);
+    	      colorButton.setIcon(ColorActivity.getColor(colorIndex));
+    	      
+    	      //colorButton.setIcon(R.drawable.red);
+    	  	} 
+    	}
+
     
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+    	
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        mMenu = menu;
         return true;
     }
 

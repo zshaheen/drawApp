@@ -14,13 +14,14 @@ import android.view.MotionEvent;
 public class DrawingView extends View {
 	
 	//drawing path that is what the user touches
-	private Path drawPath;
+	private static Path drawPath;
 	//drawing and canvas paint
 	//the user paths are drawn with drawPaint
 	//this path is then drawn on the canvas by canvasPaint
-	private Paint drawPaint, canvasPaint;
+	static Paint drawPaint;
+	private Paint canvasPaint;
 	//initial color
-	private int paintColor = 0xFF660000;
+	private int paintColor = 0xFF000000;
 	//canvas
 	private Canvas drawCanvas;
 	//canvas bitmap
@@ -30,7 +31,6 @@ public class DrawingView extends View {
 		super(context, attrs);
 		setupDrawing();
 	}
-	
 	
 	private void setupDrawing() {
 		drawPath = new Path();
