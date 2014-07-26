@@ -3,32 +3,22 @@ package com.example.drawapp;
 
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.os.Build;
 
 public class ColorActivity extends Activity {
 	
 	//private DrawingView drawView;
-	private int mPaintColor;
+	//private int mPaintColor;
 	
 	private static Integer[] colors = {R.drawable.red ,
 			R.drawable.orange , R.drawable.yellow ,
@@ -72,6 +62,10 @@ public class ColorActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		//drawView = (DrawingView)findViewById(R.id.drawing);
 		//mPaintColor = DrawingView.getPaintColor();
+		
+		getWindow().setFlags(
+			    WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+			    WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
 		setContentView(R.layout.activity_color);
 		GridView gridView = (GridView) findViewById(R.id.gridviewcolors);
@@ -128,7 +122,8 @@ public class ColorActivity extends Activity {
 	            		break;
 	            	
             	}
-            	DrawingView.drawPaint.setColor(num);
+            	DrawingView.setPaintColor(num);
+            	//DrawingView.drawPaint.setColor(num);
             	Intent resultIntent = new Intent();
         		resultIntent.putExtra("COLOR_INDEX", position);
         		setResult(Activity.RESULT_OK, resultIntent);

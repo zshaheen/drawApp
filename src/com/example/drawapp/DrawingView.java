@@ -18,14 +18,17 @@ public class DrawingView extends View {
 	//drawing and canvas paint
 	//the user paths are drawn with drawPaint
 	//this path is then drawn on the canvas by canvasPaint
-	static Paint drawPaint;
+	public static Paint drawPaint;
 	private Paint canvasPaint;
 	//initial color
-	private int paintColor = 0xFF000000;
+	private static int paintColor = 0xFF000000;
+	private static int paintBrushSize = 20;
 	//canvas
 	private Canvas drawCanvas;
 	//canvas bitmap
 	public Bitmap canvasBitmap;
+	
+	final float scale = getResources().getDisplayMetrics().density;
 	
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -37,14 +40,37 @@ public class DrawingView extends View {
 		drawPaint = new Paint();
 		drawPaint.setColor(paintColor);
 		
+		//Set the default brush size to 5 dp
+		paintBrushSize = (int) (5 * scale + 0.5f);
+		
 		drawPaint.setAntiAlias(true);
-		drawPaint.setStrokeWidth(20);
+		drawPaint.setStrokeWidth(paintBrushSize);
 		//TODO look into setStyle and setStrokeJoin
 		drawPaint.setStyle(Paint.Style.STROKE);
 		drawPaint.setStrokeJoin(Paint.Join.ROUND);
 		drawPaint.setStrokeCap(Paint.Cap.ROUND);
 		
 		canvasPaint = new Paint(Paint.DITHER_FLAG);
+	}
+	
+	public static void setPaintColor(int color) {
+		paintColor = color;
+		drawPaint.setColor(paintColor);
+	}
+	
+	public static int getPaintColor() {
+		return paintColor;
+		
+	}
+	
+	
+	public static void setBrushSize(int size) {
+		paintBrushSize = size;
+		drawPaint.setStrokeWidth(paintBrushSize);
+	}
+	
+	public static int getBrushSize() {
+		return paintBrushSize;
 	}
 	
 	@Override

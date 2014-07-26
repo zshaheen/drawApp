@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap.CompressFormat;
@@ -23,6 +24,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,16 +35,33 @@ import android.os.Build;
 public class MainActivity extends Activity {
 	
 	private static final int COLOR_ICON = 0;
+	private static final int CHANGE_BRUSH_SIZE = 1;
 	private Menu mMenu;
 	private DrawingView drawView;
-	String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SnapDrawShare/";
-    String filename = "temp";
+	private String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SnapDrawShare/";
+	private InputMethodManager imm;// = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	private Boolean firstSave = true, currFileSaved = false;
+	//Change this to correspond to the picture name that is loaded
+	private String filename = "temp";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       /*requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
+        /*WindowManager.LayoutParams attrs = getWindow().getAttributes();
+        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        getWindow().setAttributes(attrs);*/
+        getWindow().setFlags(
+        	    WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+        	    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //getWindow().getDecorView()
+        //.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+
         setContentView(R.layout.activity_main);
-        
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         drawView = (DrawingView)findViewById(R.id.drawing);
 	    
     }
@@ -98,6 +119,8 @@ public class MainActivity extends Activity {
     public void onSaveButton()  {
     	//open a dialog that allows the user to choose a name
     	final EditText input = new EditText(this);
+    	
+    	
     	input.setInputType(InputType.TYPE_CLASS_TEXT);
 
     	
@@ -120,35 +143,56 @@ public class MainActivity extends Activity {
    		});
 		saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int whichButton) {
+
+	            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 	        	dialog.cancel();
         }});
+		input.requestFocus();
+		
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 		saveDialog.show();
     	
     }
     
-    public void onColorChange(MenuItem item)  {
+    public void onColorButton()  {
     	//launch a dialog with color
-    	//launch a separate activity 
     	Intent intent = new Intent(this, ColorActivity.class);
     	startActivityForResult(intent, COLOR_ICON);
-    	//item.setIcon(R.drawable.ic_action_draw);
     
     }
+    
+    
+    public void onShareButton()  {
+    	//launch a dialog with color\
+    	
+    	//First check with a bool if the currentpic is the most recent saved
+    	
+    	
+    }
+    
+    public void onResizeBrushButton() {
+    	//launch a new activity
+    	Intent intent = new Intent(this, ResizeBrushActivity.class);
+    	startActivityForResult(intent, CHANGE_BRUSH_SIZE);
+    	//DrawingView.changeBrushSize(20);
+    	
+    }
+    
     
     public void onActivityResult(int requestCode, int resultCode, Intent data) {     
     	 // super.onActivityResult(requestCode, resultCode, data); 
     	  if(requestCode == COLOR_ICON && resultCode == RESULT_OK) {
     	      int colorIndex = data.getIntExtra("COLOR_INDEX", 0);
-    	      // TODO Switch tabs using the index.
-    	      //int shit = ColorActivity.colors[colorIndex];
     	      
     	      MenuItem colorButton = (MenuItem) mMenu.findItem(R.id.action_color_change);
-    	      //Toast.makeText(getApplicationContext(), "Index:" + colorIndex, Toast.LENGTH_LONG).show();
-    	      //ColorActivity.getColor(colorIndex);
     	      colorButton.setIcon(ColorActivity.getColor(colorIndex));
-    	      
-    	      //colorButton.setIcon(R.drawable.red);
     	  	} 
+    	  
+    	  /*if(requestCode == CHANGE_BRUSH_SIZE && resultCode == RESULT_OK) {
+    		  int brushSize = data.getIntExtra("BRUSH_SIZE", 0);
+    		  //drawView.
+    	  }*/
+    	  
     	}
 
     
@@ -178,7 +222,15 @@ public class MainActivity extends Activity {
         	break;
         
         case R.id.action_color_change:
-        	onColorChange(item);
+        	onColorButton();
+        	break;
+        	
+        case R.id.action_share:
+        	onShareButton();
+        	break;
+        
+        case R.id.action_resize_brush:
+        	onResizeBrushButton();
         	break;
         
         }

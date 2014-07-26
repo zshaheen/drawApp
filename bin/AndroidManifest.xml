@@ -28,11 +28,20 @@
         <activity
             android:name="com.example.drawapp.ColorActivity"
             android:label="@string/title_activity_color"
-            android:theme="@android:style/Theme.Holo.Light.Dialog"
-            android:parentActivityName="com.example.drawApp.MainActivity" >
+            android:parentActivityName="com.example.drawApp.MainActivity"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.drawApp.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.drawapp.ResizeBrushActivity"
+            android:label="@string/title_activity_resize_brush"
+            android:parentActivityName="com.example.drawapp.MainActivity"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.drawapp.MainActivity" />
         </activity>
     </application>
 

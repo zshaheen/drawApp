@@ -2,14 +2,16 @@
 <resources>
 
     <string name="app_name">drawApp</string>
-    
+
     <!-- Top Action Bar -->
     <string name="action_save">Save</string>
     <string name="action_draw">Draw</string>
     <string name="action_color_change">Change color</string>
+    <string name="action_share">Share</string>
+    <string name="action_resize_brush">Resize Brush</string>
     
     <string name="action_settings">Settings</string>
-    
     <string name="title_activity_color">Choose a color</string>
+    <string name="title_activity_resize_brush">Choose a brush size</string>
 
 </resources>
