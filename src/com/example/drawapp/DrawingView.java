@@ -22,13 +22,13 @@ public class DrawingView extends View {
 	private Paint canvasPaint;
 	//initial color
 	private static int paintColor = 0xFF000000;
-	private static int paintBrushSize = 20;
+	private static int paintBrushSize = 5;
 	//canvas
 	private Canvas drawCanvas;
 	//canvas bitmap
 	public Bitmap canvasBitmap;
 	
-	final float scale = getResources().getDisplayMetrics().density;
+	private static float scale = 0; 
 	
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -40,11 +40,13 @@ public class DrawingView extends View {
 		drawPaint = new Paint();
 		drawPaint.setColor(paintColor);
 		
-		//Set the default brush size to 5 dp
-		paintBrushSize = (int) (5 * scale + 0.5f);
+		scale = getResources().getDisplayMetrics().density;
+		
+		//paintBrushSize varies from 1 to 300
+		//paintBrushSize = 20;
 		
 		drawPaint.setAntiAlias(true);
-		drawPaint.setStrokeWidth(paintBrushSize);
+		drawPaint.setStrokeWidth((float) (paintBrushSize * scale + 0.5f));
 		//TODO look into setStyle and setStrokeJoin
 		drawPaint.setStyle(Paint.Style.STROKE);
 		drawPaint.setStrokeJoin(Paint.Join.ROUND);
@@ -66,7 +68,7 @@ public class DrawingView extends View {
 	
 	public static void setBrushSize(int size) {
 		paintBrushSize = size;
-		drawPaint.setStrokeWidth(paintBrushSize);
+		drawPaint.setStrokeWidth((float) (paintBrushSize * scale + 0.5f));
 	}
 	
 	public static int getBrushSize() {

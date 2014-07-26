@@ -9,22 +9,25 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class ResizeBrushActivity extends Activity {
 
 	private ImageView imageview;
 	private float maxDialogWidth = 0;
 	private float scale = 0;
-	
+	private SeekBar sizeBar = null;
 	private Paint paint;
-	private int sizeDP=5;
+	private int size=5;
 	
 	private Bitmap bmp;
-	private Button button;
+	private Button buttonOk, buttonCancel;
 	private Canvas c;
 	
 	@Override
@@ -32,13 +35,33 @@ public class ResizeBrushActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_resize_brush);
 		
-		button = (Button) findViewById(R.id.button_ok);
+		buttonOk = (Button) findViewById(R.id.button_ok);
+		buttonCancel = (Button) findViewById(R.id.button_cancel);
+		
+		buttonCancel.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	finish();
+            }
+        });
+		
+		buttonOk.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	DrawingView.setBrushSize(size);
+            	Log.i("Brush size", ""+size);
+            	Log.i("Seekbar progress", ""+sizeBar.getProgress());
+            	finish();
+            }
+        });
+
 		
 		scale = getResources().getDisplayMetrics().density;
 		
+		size = DrawingView.getBrushSize();
+		
 		//The diameters will range from 2 to 300
+		//Dialog will have a cushion of 10dp(ish?) on each side
 		maxDialogWidth = (320 * scale + 0.5f);
-		getWindow().setLayout((int)maxDialogWidth/*LayoutParams.WRAP_CONTENT  width */ , LayoutParams.WRAP_CONTENT /* height */);
+		getWindow().setLayout((int)maxDialogWidth/*LayoutParams.WRAP_CONTENT*/ , LayoutParams.WRAP_CONTENT);
 		
 		imageview = (ImageView)findViewById(R.id.circleimageview);
 		bmp = Bitmap.createBitmap((int)maxDialogWidth,(int)maxDialogWidth,Bitmap.Config.ARGB_8888);
@@ -49,13 +72,34 @@ public class ResizeBrushActivity extends Activity {
 	    paint.setAntiAlias(true);
 	    
 	    //float radius = (sizeDP * scale + 0.5f)/2;
-	    float r = (300 * scale + 0.5f);
+	    float r = (DrawingView.getBrushSize() * scale + 0.5f);
 	    
-	    c.drawCircle(maxDialogWidth/2, maxDialogWidth/2, r/2, paint);
+	    c.drawCircle(maxDialogWidth/2, maxDialogWidth/2, (float) Math.ceil(r/2), paint);
 	    imageview.setImageDrawable(new BitmapDrawable(getResources(), bmp));
+	    
+	    
+	    sizeBar = (SeekBar) findViewById(R.id.seekbar);
+  		sizeBar.setProgress(size);
+  		sizeBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+  		
+  			public void onStopTrackingTouch(SeekBar seekBar) {}       
 
-	    //imageview.invalidate();
-	    //onDraw(c);
+  		    public void onStartTrackingTouch(SeekBar seekBar) {}       
+
+  		    public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) { 
+  		    	size = progress;
+  		    	//First clear the bitmap
+  		    	bmp.eraseColor(android.R.color.white);
+  		    	//then draw a circle
+  		    	float radius = (float) ((size * scale + 0.5f)/2);
+  		    	//Log.i("raduis", ""+radius);
+  		    	c.drawCircle(maxDialogWidth/2, maxDialogWidth/2, (float) Math.ceil(radius) , paint);
+  		    	imageview.setImageDrawable(new BitmapDrawable(getResources(), bmp));
+  		      
+  		    }
+  			
+  		});
+	  		
 	}
 
 }
