@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -156,6 +157,7 @@ public class MainActivity extends Activity {
     
     public void onColorButton()  {
     	//launch a dialog with color
+    	drawView.onErase(false);
     	Intent intent = new Intent(this, ColorActivity.class);
     	startActivityForResult(intent, COLOR_ICON);
     
@@ -233,6 +235,13 @@ public class MainActivity extends Activity {
         	onResizeBrushButton();
         	break;
         
+        case R.id.action_erase:
+        	drawView.onErase(true);
+        	break;
+        
+        case R.id.action_draw:
+        	drawView.onErase(false);
+        	break;
         }
       //return super.onOptionsItemSelected(item);
     	return true;

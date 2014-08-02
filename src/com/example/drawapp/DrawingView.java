@@ -8,6 +8,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.view.MotionEvent;
 
 
@@ -30,6 +32,9 @@ public class DrawingView extends View {
 	
 	private static float scale = 0; 
 	
+	public static boolean erase = false;
+	
+	
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setupDrawing();
@@ -51,8 +56,21 @@ public class DrawingView extends View {
 		drawPaint.setStyle(Paint.Style.STROKE);
 		drawPaint.setStrokeJoin(Paint.Join.ROUND);
 		drawPaint.setStrokeCap(Paint.Cap.ROUND);
-		
+		//drawPaint.setAlpha(0xFF);
+		//setLayerType(View.LAYER_TYPE_SOFTWARE, drawPaint);
 		canvasPaint = new Paint(Paint.DITHER_FLAG);
+	}
+	
+	
+	public void onErase(boolean val) {
+		erase = val;
+		if(erase)
+			drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+			//drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+			//this.setColor("#FFFFFFFF");
+		else 
+			drawPaint.setXfermode(null);
+					
 	}
 	
 	public static void setPaintColor(int color) {
@@ -80,8 +98,9 @@ public class DrawingView extends View {
 		super.onSizeChanged(w, h, oldw, oldh);
 		canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 		drawCanvas = new Canvas(canvasBitmap);
-		drawCanvas.drawColor(Color.WHITE);
+		//drawCanvas.drawColor(Color.WHITE);
 		//drawCanvas.drawColor(Color.TRANSPARENT);
+		
 	}
 	
 	
@@ -99,9 +118,15 @@ public class DrawingView extends View {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 		    drawPath.moveTo(touchX, touchY);
+		    drawPath.lineTo(touchX+0.001f, touchY+0.001f);
 		    break;
 		case MotionEvent.ACTION_MOVE:
 		    drawPath.lineTo(touchX, touchY);
+		    if(erase) {
+		    	drawCanvas.drawPath(drawPath, drawPaint);
+		    	drawPath.reset();
+		    	drawPath.moveTo(touchX, touchY);
+		    }
 		    break;
 		case MotionEvent.ACTION_UP:
 		    drawCanvas.drawPath(drawPath, drawPaint);

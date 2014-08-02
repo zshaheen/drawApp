@@ -68,13 +68,22 @@ public class ResizeBrushActivity extends Activity {
 	    c = new Canvas(bmp);
 	    
 	    paint = new Paint();
-	    paint.setColor(DrawingView.getPaintColor());
 	    paint.setAntiAlias(true);
+	    if(DrawingView.erase)
+	    	paint.setColor(0xFF000000);
+	    else
+	    	paint.setColor(DrawingView.getPaintColor());
+	    	
 	    
 	    //float radius = (sizeDP * scale + 0.5f)/2;
 	    float r = (DrawingView.getBrushSize() * scale + 0.5f);
 	    
 	    c.drawCircle(maxDialogWidth/2, maxDialogWidth/2, (float) Math.ceil(r/2), paint);
+	    if(DrawingView.erase) {
+	    	paint.setColor(0xFFFFFFFF);
+	    	c.drawCircle(maxDialogWidth/2, maxDialogWidth/2, (float) Math.ceil((r-(1 * scale + 0.5f))/2), paint);
+	    	paint.setColor(0xFF000000);
+	    }
 	    imageview.setImageDrawable(new BitmapDrawable(getResources(), bmp));
 	    
 	    
@@ -94,6 +103,11 @@ public class ResizeBrushActivity extends Activity {
   		    	float radius = (float) ((size * scale + 0.5f)/2);
   		    	//Log.i("raduis", ""+radius);
   		    	c.drawCircle(maxDialogWidth/2, maxDialogWidth/2, (float) Math.ceil(radius) , paint);
+  		    	if(DrawingView.erase) {
+  			    	paint.setColor(0xFFFFFFFF);
+  			    	c.drawCircle(maxDialogWidth/2, maxDialogWidth/2, (float) Math.ceil((radius-(1 * scale + 0.5f))), paint);
+  			    	paint.setColor(0xFF000000);
+  			    }
   		    	imageview.setImageDrawable(new BitmapDrawable(getResources(), bmp));
   		      
   		    }

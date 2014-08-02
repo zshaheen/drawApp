@@ -8,6 +8,7 @@
     <string name="action_draw">Draw</string>
     <string name="action_color_change">Change color</string>
     <string name="action_share">Share</string>
+    <string name="action_erase">Erase</string>
     <string name="action_resize_brush">Resize Brush</string>
     
     <string name="action_settings">Settings</string>
