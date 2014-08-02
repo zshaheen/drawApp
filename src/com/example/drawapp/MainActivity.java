@@ -90,7 +90,9 @@ public class MainActivity extends Activity {
 						Toast.makeText(getApplicationContext(), "Error creating file stream", Toast.LENGTH_LONG).show();
 						e.printStackTrace();
 					}
-    		    	drawView.canvasBitmap.compress(CompressFormat.PNG, 100, stream);
+					drawView.get().compress(CompressFormat.PNG, 100, stream);
+					drawView.setDrawingCacheEnabled(false);
+    		    	//drawView.canvasBitmap.compress(CompressFormat.PNG, 100, stream);
     		    	Toast.makeText(getApplicationContext(), "Image saved in Pictures/SnapDrawShare", Toast.LENGTH_LONG).show();
     	        }
     	        
@@ -112,7 +114,9 @@ public class MainActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "Error creating file stream", Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-	    	drawView.canvasBitmap.compress(CompressFormat.PNG, 100, stream);
+			drawView.get().compress(CompressFormat.PNG, 100, stream);
+			drawView.setDrawingCacheEnabled(false);
+	    	//drawView.canvasBitmap.compress(CompressFormat.PNG, 100, stream);
 	    	Toast.makeText(getApplicationContext(), "Image saved in Pictures/SnapDrawShare", Toast.LENGTH_LONG).show();
     	}
     }
