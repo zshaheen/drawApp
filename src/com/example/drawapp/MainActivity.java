@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
 						Toast.makeText(getApplicationContext(), "Error creating file stream", Toast.LENGTH_LONG).show();
 						e.printStackTrace();
 					}
-					drawView.get().compress(CompressFormat.PNG, 100, stream);
+					drawView.getDrawCache().compress(CompressFormat.PNG, 100, stream);
 					drawView.setDrawingCacheEnabled(false);
     		    	//drawView.canvasBitmap.compress(CompressFormat.PNG, 100, stream);
     		    	Toast.makeText(getApplicationContext(), "Image saved in Pictures/SnapDrawShare", Toast.LENGTH_LONG).show();
@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "Error creating file stream", Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-			drawView.get().compress(CompressFormat.PNG, 100, stream);
+			drawView.getDrawCache().compress(CompressFormat.PNG, 100, stream);
 			drawView.setDrawingCacheEnabled(false);
 	    	//drawView.canvasBitmap.compress(CompressFormat.PNG, 100, stream);
 	    	Toast.makeText(getApplicationContext(), "Image saved in Pictures/SnapDrawShare", Toast.LENGTH_LONG).show();
@@ -236,6 +236,10 @@ public class MainActivity extends Activity {
         
         case R.id.action_draw:
         	drawView.onErase(false);
+        	break;
+        
+        case R.id.action_undo:
+        	drawView.onUndo();
         	break;
         }
       //return super.onOptionsItemSelected(item);
