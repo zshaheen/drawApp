@@ -1,8 +1,6 @@
 package com.example.drawapp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -44,13 +42,36 @@ public class DrawingView extends View {
 
 	private float xOffset=0, yOffset=0;
 	
-	private ArrayList<Path> paths = new ArrayList<Path>();
-	private ArrayList<Paint> drawPaints = new ArrayList<Paint>();
-
+	//private ArrayList<Path> paths = new ArrayList<Path>();
+	//private ArrayList<Paint> drawPaints = new ArrayList<Paint>();
+	
+	private ArrayList<pathAndPaint> strokes = new ArrayList<pathAndPaint>();
+	private ArrayList<pathAndPaint> redoStrokes = new ArrayList<pathAndPaint>();
 	private Path mPath;
 	
-	private static int undoRedoSize = 3;
+	//private static int undoRedoSize = 3;
 
+	
+	public class pathAndPaint {
+		
+		private Path path;
+		private Paint paint;
+		
+		public pathAndPaint(Path p, Paint pt) {
+			path = p;
+			paint = pt;
+		}
+		
+		public Path getPath() {
+			return path;
+		}
+		
+		public Paint getPaint() {
+			return paint;
+		}
+		
+	}
+	
 	
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -170,24 +191,46 @@ public class DrawingView extends View {
 		*/
 		//Reload the canvas, clearing it of the paths
 		
-		if(paths.size() > 0) {
+		if(strokes.size() > 0) {
 			drawCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 			drawCanvas.drawBitmap(resizeBmp, xOffset, yOffset, canvasPaint);
 			drawCanvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
 			
 			
 			//Pop the last path from ArrayList paths
-			paths.remove(paths.size()-1);
-			drawPaints.remove(drawPaints.size()-1);
+			redoStrokes.add(strokes.get(strokes.size()-1));
+			strokes.remove(strokes.size()-1); 
+			//paths.remove(paths.size()-1);
+			//drawPaints.remove(drawPaints.size()-1);
 			
 			//Redraw the paths
-			for(int i = 0; i<paths.size(); i++) {
-				drawCanvas.drawPath(paths.get(i), drawPaints.get(i));
+			for(int i = 0; i<strokes.size(); i++) {
+				drawCanvas.drawPath(strokes.get(i).getPath(), strokes.get(i).getPaint());  //paths.get(i), drawPaints.get(i));
 			}
 			invalidate();
 		}
 		else {
-			Toast.makeText(getContext(), "Nothing left to undo.", Toast.LENGTH_LONG).show();
+			Toast.makeText(getContext(), "Nothing left to undo.", Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	
+	public void onRedo() {
+		if(redoStrokes.size() > 0) {
+			//add last item on redoStrokes back to stokes
+			strokes.add(redoStrokes.get(redoStrokes.size()-1) );
+			//Remove this item from redoStrokes
+			redoStrokes.remove(redoStrokes.size()-1); 
+			//Force everthing to redraw
+			//Redraw the paths
+			for(int i = 0; i<strokes.size(); i++) {
+				drawCanvas.drawPath(strokes.get(i).getPath(), strokes.get(i).getPaint());  //paths.get(i), drawPaints.get(i));
+			}
+			invalidate();
+			
+		}
+		else {
+			Toast.makeText(getContext(), "Nothing left to redo.", Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -259,7 +302,7 @@ public class DrawingView extends View {
 			    break;
 			case MotionEvent.ACTION_UP:
 				
-				Log.i("pathsLength",""+paths.size());
+				//Log.i("pathsLength",""+strokes.size());
 				touch_up(touchX, touchY);
 				//invalidate();
 			    break;
@@ -272,28 +315,21 @@ public class DrawingView extends View {
 		return true;
 	}
 	
-	 private void touch_start(float x, float y) 
-	 {
-	   //undonePaths.clear();
-	   mPath.reset();
-	   mPath.moveTo(x, y);
-	   mPath.lineTo(x+0.001f, y+0.001f);
-	   //mPath.lineTo(x, y);
+	private void touch_start(float x, float y) 
+	{
+		redoStrokes.clear();
+		mPath.reset();
+		mPath.moveTo(x, y);
+		mPath.lineTo(x+0.001f, y+0.001f);
+		//mPath.lineTo(x, y);
 	}
 
 	private void touch_move(float x, float y) 
 	{
-	    //float dx = Math.abs(x - mX);
-	    //float dy = Math.abs(y - mY);
-
-	        //mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-	        //mX = x;
-	        //mY = y;
-	        mPath.lineTo(x, y); 
-	        
-	        drawCanvas.drawPath(mPath, drawPaint);
-	        invalidate();
-	        //invalidate();
+		mPath.lineTo(x, y); 
+		
+		drawCanvas.drawPath(mPath, drawPaint);
+		//invalidate();
 	}  
 
 	private void touch_up(float x, float y) 
@@ -309,8 +345,9 @@ public class DrawingView extends View {
 			drawPaints.remove(0);
 	    }*/
 	    
-	    paths.add(mPath);
-	    drawPaints.add(drawPaint);
+	    strokes.add(new pathAndPaint(mPath, drawPaint));
+	    //paths.add(mPath);
+	    //drawPaints.add(drawPaint);
 		
 	    
 	    

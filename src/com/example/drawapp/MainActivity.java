@@ -243,6 +243,10 @@ public class MainActivity extends Activity {
         case R.id.action_undo:
         	drawView.onUndo();
         	break;
+        
+        case R.id.action_redo:
+        	drawView.onRedo();
+        	break;
         }
       //return super.onOptionsItemSelected(item);
     	return true;
