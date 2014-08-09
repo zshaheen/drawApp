@@ -48,6 +48,8 @@ public class DrawingView extends View {
 	private ArrayList<Paint> drawPaints = new ArrayList<Paint>();
 
 	private Path mPath;
+	
+	private static int undoRedoSize = 3;
 
 	
 	public DrawingView(Context context, AttributeSet attrs) {
@@ -72,8 +74,6 @@ public class DrawingView extends View {
 		drawPaint.setStrokeCap(Paint.Cap.ROUND);
 		
 		canvasPaint = new Paint(Paint.DITHER_FLAG);
-		
-		
 		
 		
 		//tempBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
@@ -178,6 +178,7 @@ public class DrawingView extends View {
 			
 			//Pop the last path from ArrayList paths
 			paths.remove(paths.size()-1);
+			drawPaints.remove(drawPaints.size()-1);
 			
 			//Redraw the paths
 			for(int i = 0; i<paths.size(); i++) {
@@ -277,9 +278,7 @@ public class DrawingView extends View {
 	   mPath.reset();
 	   mPath.moveTo(x, y);
 	   mPath.lineTo(x+0.001f, y+0.001f);
-	   //mPath.lineTo(x, y); 
-	   //mX = x;
-	  // mY = y;
+	   //mPath.lineTo(x, y);
 	}
 
 	private void touch_move(float x, float y) 
@@ -301,7 +300,15 @@ public class DrawingView extends View {
 	{
 		//mPath.lineTo(x, y); 
 	    drawCanvas.drawPath(mPath, drawPaint);
-	    //bitmapCanvas.drawPath(mPath, paintLine);// commit the path to our offscreen  
+	    //bitmapCanvas.drawPath(mPath, paintLine);// commit the path to our offscreen 
+	    
+	    /*
+	    if(paths.size() > undoRedoSize) {
+	    	//pop the first path and drawPaint
+	    	paths.remove(0);
+			drawPaints.remove(0);
+	    }*/
+	    
 	    paths.add(mPath);
 	    drawPaints.add(drawPaint);
 		
@@ -316,6 +323,8 @@ public class DrawingView extends View {
 		drawPaint.setStyle(Paint.Style.STROKE);
 		drawPaint.setStrokeJoin(Paint.Join.ROUND);
 		drawPaint.setStrokeCap(Paint.Cap.ROUND);
+		if(erase)
+			drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 	}
 	
 }

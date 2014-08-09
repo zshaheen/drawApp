@@ -45,6 +45,8 @@ public class MainActivity extends Activity {
 	//Change this to correspond to the picture name that is loaded
 	private String filename = "temp";
 	
+	
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
