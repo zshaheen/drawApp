@@ -4,34 +4,24 @@ package com.example.drawapp;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.Editable;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.os.Build;
 
 public class MainActivity extends Activity {
 	
@@ -40,8 +30,7 @@ public class MainActivity extends Activity {
 	private Menu mMenu;
 	private DrawingView drawView;
 	private String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SnapDrawShare/";
-	private InputMethodManager imm;// = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-	private Boolean firstSave = true, currFileSaved = false;
+	//private Boolean firstSave = true, currFileSaved = false;
 	//Change this to correspond to the picture name that is loaded
 	private String filename = "temp";
 	
@@ -55,7 +44,6 @@ public class MainActivity extends Activity {
         	    WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
-        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         drawView = (DrawingView)findViewById(R.id.drawing);
 	    
     }
@@ -118,18 +106,15 @@ public class MainActivity extends Activity {
     	//open a dialog that allows the user to choose a name
     	final EditText input = new EditText(this);
     	
-    	
     	input.setInputType(InputType.TYPE_CLASS_TEXT);
-
     	
-    	AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
-		saveDialog.setTitle("Save Drawing");
-		saveDialog.setView(input);
-		saveDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+    	final AlertDialog.Builder saveDialogBuilder = new AlertDialog.Builder(this);
+    	saveDialogBuilder.setTitle("Save Drawing");
+    	saveDialogBuilder.setView(input);
+		
+    	saveDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int whichButton) {
 	        	filename = input.getText().toString();
-	        	
-	        	
 	        	try {
 	    			saveFile();
 	    		} catch (FileNotFoundException e) {
@@ -137,19 +122,28 @@ public class MainActivity extends Activity {
 	    			e.printStackTrace();
 	    		}
 	        }
-	        
    		});
-		saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+    	
+    	saveDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int whichButton) {
-
-	            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 	        	dialog.cancel();
         }});
-		input.requestFocus();
-		
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-		saveDialog.show();
     	
+    	
+		final AlertDialog saveDialog = saveDialogBuilder.create();
+		saveDialog.show();
+	
+		input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+    	    @Override
+    	    public void onFocusChange(View v, boolean hasFocus) {
+    	        if (hasFocus) {//(input.requestFocus()) {
+    	        	saveDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    	        }
+    	    }
+    	});
+
+		
+
     }
     
     public void onColorButton()  {
