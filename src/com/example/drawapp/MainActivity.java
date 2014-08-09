@@ -4,6 +4,7 @@ package com.example.drawapp;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import android.app.Activity;
@@ -11,9 +12,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap.CompressFormat;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,8 +28,8 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-	private static final int COLOR_ICON = 0;
-	private static final int CHANGE_BRUSH_SIZE = 1;
+	private static final int COLOR_ICON = 0, CHANGE_BRUSH_SIZE = 1, SHARE_BUTTON_PIC = 2;
+	
 	private Menu mMenu;
 	private DrawingView drawView;
 	private String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SnapDrawShare/";
@@ -68,7 +71,7 @@ public class MainActivity extends Activity {
 						stream = new FileOutputStream(savePath);
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
-						Toast.makeText(getApplicationContext(), "Error creating file stream", Toast.LENGTH_LONG).show();
+						Toast.makeText(getApplicationContext(), "Error creating file stream :(", Toast.LENGTH_LONG).show();
 						e.printStackTrace();
 					}
 					drawView.getDrawCache().compress(CompressFormat.PNG, 100, stream);
@@ -92,7 +95,7 @@ public class MainActivity extends Activity {
 				stream = new FileOutputStream(savePath);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
-				Toast.makeText(getApplicationContext(), "Error creating file stream", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "Error creating file stream :(", Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
 			drawView.getDrawCache().compress(CompressFormat.PNG, 100, stream);
@@ -118,7 +121,7 @@ public class MainActivity extends Activity {
 	        	try {
 	    			saveFile();
 	    		} catch (FileNotFoundException e) {
-	    			Toast.makeText(getApplicationContext(), "Error saving image", Toast.LENGTH_LONG).show();
+	    			Toast.makeText(getApplicationContext(), "Error saving image :(", Toast.LENGTH_LONG).show();
 	    			e.printStackTrace();
 	    		}
 	        }
@@ -141,9 +144,6 @@ public class MainActivity extends Activity {
     	        }
     	    }
     	});
-
-		
-
     }
     
     public void onColorButton()  {
@@ -155,11 +155,42 @@ public class MainActivity extends Activity {
     }
     
     
-    public void onShareButton()  {
-    	//launch a dialog with color\
+    public void onShareButton() throws IOException  {
     	
     	//First check with a bool if the currentpic is the most recent saved
     	
+    	//Create a tempfile to send
+    	Intent sendPic = new Intent(Intent.ACTION_SEND); 
+    	sendPic.setType("image/*");
+    	//sendPic.setType("*/*");
+    	
+    	/*File outputDir = getCacheDir(); // context being the Activity pointer
+    	File outputFile = File.createTempFile("SnapDrawShare_pic", ".png", outputDir);
+    	
+    	
+    	OutputStream stream = new FileOutputStream(outputFile);
+    	
+    	//drawView.setDrawingCacheEnabled(true);
+    	//ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+    	//drawView.setDrawingCacheEnabled(true);
+    	drawView.getDrawCache().compress(CompressFormat.PNG, 100, stream);
+		
+    	Log.e("temp file path", ""+outputFile.getAbsolutePath());
+    	sendPic.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+outputFile.getAbsolutePath()) );
+    	
+    	*/
+    	String savePath = dir + "SnapDrawShare.png";
+    	//File file = new File(savePath);
+    	OutputStream stream = new FileOutputStream(savePath);
+    	
+    	drawView.getDrawCache().compress(CompressFormat.PNG, 100, stream);
+		drawView.setDrawingCacheEnabled(false);
+		
+		sendPic.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + savePath));
+    	
+    	//SET cacheTHING back to true/false
+    	startActivityForResult(Intent.createChooser(sendPic, "Send picture"), SHARE_BUTTON_PIC);
+    	//drawView.setDrawingCacheEnabled(false);
     	
     }
     
@@ -167,26 +198,25 @@ public class MainActivity extends Activity {
     	//launch a new activity
     	Intent intent = new Intent(this, ResizeBrushActivity.class);
     	startActivityForResult(intent, CHANGE_BRUSH_SIZE);
-    	//DrawingView.changeBrushSize(20);
-    	
     }
     
     
     public void onActivityResult(int requestCode, int resultCode, Intent data) {     
     	 // super.onActivityResult(requestCode, resultCode, data); 
-    	  if(requestCode == COLOR_ICON && resultCode == RESULT_OK) {
-    	      int colorIndex = data.getIntExtra("COLOR_INDEX", 0);
-    	      
-    	      MenuItem colorButton = (MenuItem) mMenu.findItem(R.id.action_color_change);
-    	      colorButton.setIcon(ColorActivity.getColor(colorIndex));
-    	  	} 
-    	  
-    	  /*if(requestCode == CHANGE_BRUSH_SIZE && resultCode == RESULT_OK) {
-    		  int brushSize = data.getIntExtra("BRUSH_SIZE", 0);
-    		  //drawView.
-    	  }*/
-    	  
-    	}
+    	if(requestCode == COLOR_ICON && resultCode == RESULT_OK) {
+    		int colorIndex = data.getIntExtra("COLOR_INDEX", 0);
+  
+    		MenuItem colorButton = (MenuItem) mMenu.findItem(R.id.action_color_change);
+			colorButton.setIcon(ColorActivity.getColor(colorIndex));
+		}
+    	
+    	else if(requestCode == SHARE_BUTTON_PIC /*&& resultCode == RESULT_OK*/) {
+    		//Delete snapdrawshare.png from Pictures/SnapDrawShare
+    		String savePath = dir +"SnapDrawShare.png";
+        	File file = new File(savePath);
+        	file.delete();
+		}
+	}
 
     
 
@@ -205,42 +235,49 @@ public class MainActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        
         switch(id) {
         
-        case R.id.action_settings:
-        	return true;
-        
-        case R.id.action_save:
-        	onSaveButton();
-        	break;
-        
-        case R.id.action_color_change:
-        	onColorButton();
-        	break;
-        	
-        case R.id.action_share:
-        	onShareButton();
-        	break;
-        
-        case R.id.action_resize_brush:
-        	onResizeBrushButton();
-        	break;
-        
-        case R.id.action_erase:
-        	drawView.onErase(true);
-        	break;
-        
-        case R.id.action_draw:
-        	drawView.onErase(false);
-        	break;
-        
-        case R.id.action_undo:
-        	drawView.onUndo();
-        	break;
-        
-        case R.id.action_redo:
-        	drawView.onRedo();
-        	break;
+	        case R.id.action_settings:
+	        	return true;
+	        
+	        case R.id.action_save:
+	        	onSaveButton();
+	        	break;
+	        
+	        case R.id.action_color_change:
+	        	onColorButton();
+	        	break;
+	        	
+	        case R.id.action_share:
+				try {
+					onShareButton();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Toast.makeText(getApplicationContext(), "Error sharing file.", Toast.LENGTH_LONG).show();
+				}
+	        	break;
+	        
+	        case R.id.action_resize_brush:
+	        	onResizeBrushButton();
+	        	break;
+	        
+	        case R.id.action_erase:
+	        	drawView.onErase(true);
+	        	break;
+	        
+	        case R.id.action_draw:
+	        	drawView.onErase(false);
+	        	break;
+	        
+	        case R.id.action_undo:
+	        	drawView.onUndo();
+	        	break;
+	        
+	        case R.id.action_redo:
+	        	drawView.onRedo();
+	        	break;
         }
       //return super.onOptionsItemSelected(item);
     	return true;
